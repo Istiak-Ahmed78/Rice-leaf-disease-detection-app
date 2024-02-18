@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ml_web_app/models/response_model.dart';
-import 'package:ml_web_app/view/methods.dart';
+import 'package:ml_web_app/methods.dart';
 
 void showSheet(ResponseModel result, BuildContext context) {
   showModalBottomSheet(

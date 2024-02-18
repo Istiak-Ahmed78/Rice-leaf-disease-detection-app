@@ -15,7 +15,7 @@ class ScannerScreen extends StatelessWidget {
         return Center(
           child: controller.imageFile == null
               ? ElevatedButton(
-                  onPressed: controller.pickImage,
+                  onPressed: () {},
                   child: const Text('Choose image'),
                 )
               : Column(
@@ -37,7 +37,7 @@ class ScannerScreen extends StatelessWidget {
                       height: 10,
                     ),
                     ElevatedButton(
-                      onPressed: controller.pickImage,
+                      onPressed: () {},
                       child: const Text('Reselect Image'),
                     ),
                     const SizedBox(

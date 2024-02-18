@@ -8,20 +8,6 @@ import 'models/response_model.dart';
 const baseUrl = 'https://rice-leaf-disease-detection-717d158cc115.herokuapp.com';
 
 class Repo {
-  // Future<void> ping() async {
-  //   try {
-  //     var response = await http.get(Uri.parse('$baseUrl/ping/'));
-  //     if (response.statusCode == 200) {
-  //       var responseBody = response..body;
-  //       print(responseBody);
-  //     } else {
-  //       print('Image upload failed: ${response.statusCode}');
-  //     }
-  //   } catch (e) {
-  //     print('Image upload error: $e');
-  //   }
-  // }
-
   Future<ResponseModel?> uploadImage(File selectedFile) async {
     if (await hasInternetConnection()) {
       final uri = Uri.parse('$baseUrl/predict');

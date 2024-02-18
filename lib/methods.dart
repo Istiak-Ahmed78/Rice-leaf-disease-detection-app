@@ -1,4 +1,6 @@
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:flutter/material.dart';
 
 void changeLoadingState(bool st) {
   if (st) {
@@ -44,4 +46,15 @@ String convertNumber(int eng) {
     }
   }
   return bengali;
+}
+
+Future<String?> cropImage(BuildContext context, String imageFilePath) async {
+  CroppedFile? croppedFile = await ImageCropper().cropImage(
+    sourcePath: imageFilePath,
+    aspectRatioPresets: [CropAspectRatioPreset.square, CropAspectRatioPreset.ratio3x2, CropAspectRatioPreset.original, CropAspectRatioPreset.ratio4x3, CropAspectRatioPreset.ratio16x9],
+    uiSettings: [
+      AndroidUiSettings(toolbarTitle: 'Cropper', toolbarColor: Colors.deepOrange, toolbarWidgetColor: Colors.white, initAspectRatio: CropAspectRatioPreset.original, lockAspectRatio: false),
+    ],
+  );
+  return croppedFile?.path;
 }

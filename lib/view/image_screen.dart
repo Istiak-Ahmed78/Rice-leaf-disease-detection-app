@@ -1,22 +1,21 @@
 import 'dart:io';
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:ml_web_app/services.dart';
-import 'package:ml_web_app/view/methods.dart';
+import 'package:ml_web_app/methods.dart';
 import 'package:ml_web_app/models/response_model.dart';
 import 'bottom_sh.dart';
+import "package:images_picker/images_picker.dart";
 
 class CameraScreen extends StatefulWidget {
-  const CameraScreen({super.key, required this.cameras});
-  final List<CameraDescription> cameras;
+  const CameraScreen({
+    super.key,
+  });
   @override
   State<CameraScreen> createState() => _CameraScreenState();
 }
 
 class _CameraScreenState extends State<CameraScreen> {
-  late CameraController controller;
   File? capturedFile;
   bool isLoading = false;
   void setLoadingState(bool loading) {
@@ -36,56 +35,36 @@ class _CameraScreenState extends State<CameraScreen> {
     }
   }
 
-  void capture() async {
-    XFile? capturedFileXFile = await controller.takePicture();
-    capturedFile = File(capturedFileXFile.path);
-    setState(() {});
-    predictImage();
-  }
-
   void pickImage() async {
-    XFile? capturedFileXFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+    List<Media>? capturedFileXFile = await ImagesPicker.openCamera(
+      pickType: PickType.image,
+      cropOpt: CropOption(
+        aspectRatio: CropAspectRatio.custom,
+        cropType: CropType.rect, // currently for android
+      ),
+    );
     if (capturedFileXFile != null) {
-      capturedFile = File(capturedFileXFile.path);
-      setState(() {});
-      predictImage();
+      // predictImage();
+      String? croppedImagePath = await cropImage(context, capturedFileXFile.first.path);
+      if (croppedImagePath != null) {
+        capturedFile = File(croppedImagePath);
+        setState(() {});
+      }
     }
   }
 
   @override
   void initState() {
     super.initState();
-    controller = CameraController(widget.cameras[0], ResolutionPreset.max);
-    controller.initialize().then((_) {
-      if (!mounted) {
-        return;
-      }
-      setState(() {});
-    }).catchError((Object e) {
-      if (e is CameraException) {
-        switch (e.code) {
-          case 'CameraAccessDenied':
-            // Handle access errors here.
-            break;
-          default:
-            // Handle other errors here.
-            break;
-        }
-      }
-    });
   }
 
   @override
   void dispose() {
-    controller.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (!controller.value.isInitialized) {
-      return Container();
-    }
     return MaterialApp(
       home: Stack(
         children: [
@@ -98,7 +77,7 @@ class _CameraScreenState extends State<CameraScreen> {
                     fit: BoxFit.cover,
                   ),
                 )
-              : SizedBox(height: MediaQuery.of(context).size.height, width: MediaQuery.of(context).size.width, child: CameraPreview(controller)),
+              : SizedBox(),
           Align(
             alignment: Alignment.bottomCenter,
             child: Padding(
@@ -107,7 +86,7 @@ class _CameraScreenState extends State<CameraScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   GestureDetector(
-                    onTap: capture,
+                    onTap: pickImage,
                     child: Container(
                       height: 60,
                       width: 60,
