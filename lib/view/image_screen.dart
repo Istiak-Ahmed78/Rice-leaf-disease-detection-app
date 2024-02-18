@@ -29,9 +29,20 @@ class _CameraScreenState extends State<CameraScreen> {
       changeLoadingState(true);
       ResponseModel? res = await Repo().uploadImage(capturedFile!);
       changeLoadingState(false);
-      if (res != null && res != '') {
-        print(res);
-        showSheet(res, context);
+      if (res?.predicted != null && res?.predicted != '') {
+        showSheet(res!, context);
+      } else {
+        showDialog(
+            context: context,
+            builder: (_) {
+              return SizedBox(
+                width: MediaQuery.of(context).size.width * 0.8,
+                height: MediaQuery.of(context).size.height * 0.5,
+                child: Center(
+                  child: Text('Sorry, couldnot found any result'),
+                ),
+              );
+            });
       }
     }
   }
@@ -44,7 +55,7 @@ class _CameraScreenState extends State<CameraScreen> {
   }
 
   void pickImage() async {
-    XFile? capturedFileXFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+    XFile? capturedFileXFile = await ImagePicker().pickImage(imageQuality: 80, source: ImageSource.gallery);
     if (capturedFileXFile != null) {
       capturedFile = File(capturedFileXFile.path);
       setState(() {});

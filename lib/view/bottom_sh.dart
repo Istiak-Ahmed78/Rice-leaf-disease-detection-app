@@ -46,7 +46,7 @@ void showSheet(ResponseModel result, BuildContext context) {
 
 String getDiseaseNameInBangle(String nameInEnglish) {
   switch (nameInEnglish) {
-    case 'Leaf blight':
+    case 'Leaf bright':
       return 'লীফ ব্লাইট';
     case 'Leaf smut':
       return 'লীফ ব্লাস্ট';
@@ -59,7 +59,7 @@ String getDiseaseNameInBangle(String nameInEnglish) {
 
 Widget getHelpWidget(String nameInEnglish, BuildContext context) {
   switch (nameInEnglish) {
-    case 'Leaf blight':
+    case 'Leaf bright':
       return leafBlightHelp(context);
     case 'Leaf smut':
       return brownSpotHelp(context);
