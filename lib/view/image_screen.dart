@@ -9,14 +9,14 @@ import 'package:ml_web_app/models/response_model.dart';
 import 'bottom_sh.dart';
 
 class CameraScreen extends StatefulWidget {
-  const CameraScreen({super.key, required this.cameras});
-  final List<CameraDescription> cameras;
+  const CameraScreen({
+    super.key,
+  });
   @override
   State<CameraScreen> createState() => _CameraScreenState();
 }
 
 class _CameraScreenState extends State<CameraScreen> {
-  late CameraController controller;
   File? capturedFile;
   bool isLoading = false;
   void setLoadingState(bool loading) {
@@ -36,15 +36,8 @@ class _CameraScreenState extends State<CameraScreen> {
     }
   }
 
-  void capture() async {
-    XFile? capturedFileXFile = await controller.takePicture();
-    capturedFile = File(capturedFileXFile.path);
-    setState(() {});
-    predictImage();
-  }
-
-  void pickImage() async {
-    XFile? capturedFileXFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+  void pickImage(ImageSource imageSource) async {
+    XFile? capturedFileXFile = await ImagePicker().pickImage(source: imageSource);
     if (capturedFileXFile != null) {
       capturedFile = File(capturedFileXFile.path);
       setState(() {});
@@ -53,41 +46,9 @@ class _CameraScreenState extends State<CameraScreen> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    controller = CameraController(widget.cameras[0], ResolutionPreset.max);
-    controller.initialize().then((_) {
-      if (!mounted) {
-        return;
-      }
-      setState(() {});
-    }).catchError((Object e) {
-      if (e is CameraException) {
-        switch (e.code) {
-          case 'CameraAccessDenied':
-            // Handle access errors here.
-            break;
-          default:
-            // Handle other errors here.
-            break;
-        }
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    controller.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    if (!controller.value.isInitialized) {
-      return Container();
-    }
-    return MaterialApp(
-      home: Stack(
+    return Scaffold(
+      body: Stack(
         children: [
           capturedFile != null
               ? SizedBox(
@@ -98,7 +59,7 @@ class _CameraScreenState extends State<CameraScreen> {
                     fit: BoxFit.cover,
                   ),
                 )
-              : SizedBox(height: MediaQuery.of(context).size.height, width: MediaQuery.of(context).size.width, child: CameraPreview(controller)),
+              : SizedBox(height: MediaQuery.of(context).size.height, width: MediaQuery.of(context).size.width, child: Text('Pick image')),
           Align(
             alignment: Alignment.bottomCenter,
             child: Padding(
@@ -107,15 +68,23 @@ class _CameraScreenState extends State<CameraScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   GestureDetector(
-                    onTap: capture,
+                    onTap: () => pickImage(ImageSource.camera),
                     child: Container(
                       height: 60,
                       width: 60,
-                      decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.red),
+                      decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: Colors.blue,
+                          )),
+                      child: const Icon(
+                        Icons.camera_alt_outlined,
+                        color: Colors.blue,
+                      ),
                     ),
                   ),
                   GestureDetector(
-                    onTap: pickImage,
+                    onTap: () => pickImage(ImageSource.gallery),
                     child: Container(
                       height: 60,
                       width: 60,

@@ -4,7 +4,10 @@ import 'package:get/get.dart';
 import 'package:ml_web_app/view/image_screen.dart';
 
 class IntroScreen extends StatelessWidget {
-  const IntroScreen({super.key, required this.cameras});
+  const IntroScreen({
+    super.key,
+    required this.cameras,
+  });
   final List<CameraDescription> cameras;
   final String assetName = 'assets/leaf_test.jpeg';
   @override
@@ -14,9 +17,7 @@ class IntroScreen extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         splashColor: Colors.purple,
         highlightElevation: 50,
-        onPressed: () => Get.to(() => CameraScreen(
-              cameras: cameras,
-            )),
+        onPressed: () => Get.to(() => CameraScreen()),
         child: const Text('Start'),
       ),
       body: SizedBox(

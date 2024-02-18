@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:ml_web_app/services.dart';
 
 class ScannerScreenController extends GetxController {
   static ScannerScreenController get to => Get.find();
