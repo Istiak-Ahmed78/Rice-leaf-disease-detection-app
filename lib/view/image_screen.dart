@@ -5,7 +5,6 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:ml_web_app/services.dart';
 import 'package:ml_web_app/view/methods.dart';
-import 'package:ml_web_app/models/response_model.dart';
 import 'bottom_sh.dart';
 
 class CameraScreen extends StatefulWidget {
@@ -27,23 +26,22 @@ class _CameraScreenState extends State<CameraScreen> {
   void predictImage() async {
     if (capturedFile != null) {
       changeLoadingState(true);
-      ResponseModel? res = await Repo().uploadImage(capturedFile!);
-      changeLoadingState(false);
-      if (res?.predicted != null && res?.predicted != '') {
-        showSheet(res!, context);
-      } else {
-        showDialog(
-            context: context,
-            builder: (_) {
-              return SizedBox(
-                width: MediaQuery.of(context).size.width * 0.8,
-                height: MediaQuery.of(context).size.height * 0.5,
-                child: Center(
-                  child: Text('Sorry, couldnot found any result'),
-                ),
-              );
-            });
-      }
+      Repo().uploadImage(capturedFile!).then((res) {
+        changeLoadingState(false);
+        if (res?.predicted != null && res?.predicted != '') {
+          double possibility = res?.confidance ?? 0;
+          possibility = possibility * 100;
+
+          if (possibility < 10) {
+            poorValidationResult(context);
+          } else {
+            showResultSheet(res!, context);
+          }
+        } else {
+          changeLoadingState(false);
+          showNoResultPopuos(context);
+        }
+      });
     }
   }
 
@@ -162,4 +160,36 @@ class _CameraScreenState extends State<CameraScreen> {
       ),
     );
   }
+}
+
+void showNoResultPopuos(BuildContext context) {
+  showDialog(
+      context: context,
+      builder: (_) {
+        return AlertDialog(
+          content: SizedBox(
+            width: MediaQuery.of(context).size.width * 0.8,
+            height: MediaQuery.of(context).size.height * 0.5,
+            child: const Center(
+              child: Text('Sorry, couldnot found any result'),
+            ),
+          ),
+        );
+      });
+}
+
+void poorValidationResult(BuildContext context) {
+  showDialog(
+      context: context,
+      builder: (_) {
+        return AlertDialog(
+          content: SizedBox(
+            width: MediaQuery.of(context).size.width * 0.8,
+            height: MediaQuery.of(context).size.height * 0.5,
+            child: const Center(
+              child: Text('Your image may not of leaf'),
+            ),
+          ),
+        );
+      });
 }

@@ -44,6 +44,7 @@ dependencies:
   camera: ^0.10.5+9
   easy_loader: ^2.0.0
   flutter_easyloading: ^3.0.5
+  google_mlkit_object_detection: ^0.11.0
 
 dev_dependencies:
   flutter_test:
